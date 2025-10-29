@@ -1,0 +1,122 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX_ITENS 10
+
+// Estrutura para representar um item
+struct Item {
+    char nome[30];
+    char tipo[20];
+    int quantidade;
+};
+
+int main() {
+    struct Item mochila[MAX_ITENS];
+    int totalItens = 0;
+    int opcao;
+
+    do {
+        printf("\n=== MENU DA MOCHILA ===\n");
+        printf("1. Adicionar item\n");
+        printf("2. Remover item pelo nome\n");
+        printf("3. Listar itens\n");
+        printf("4. Buscar item por nome\n");
+        printf("0. Sair\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+        getchar(); // Limpa o buffer
+
+        switch (opcao) {
+            case 1:
+                if (totalItens < MAX_ITENS) {
+                    printf("Nome do item: ");
+                    fgets(mochila[totalItens].nome, sizeof(mochila[totalItens].nome), stdin);
+                    mochila[totalItens].nome[strcspn(mochila[totalItens].nome, "\n")] = '\0';
+
+                    printf("Tipo do item: ");
+                    fgets(mochila[totalItens].tipo, sizeof(mochila[totalItens].tipo), stdin);
+                    mochila[totalItens].tipo[strcspn(mochila[totalItens].tipo, "\n")] = '\0';
+
+                    printf("Quantidade: ");
+                    scanf("%d", &mochila[totalItens].quantidade);
+                    getchar();
+
+                    totalItens++;
+                    printf("✅ Item adicionado com sucesso!\n");
+                } else {
+                    printf("⚠️ Mochila cheia! Remova um item antes de adicionar outro.\n");
+                }
+                break;
+
+            case 2: {
+                char nomeRemover[30];
+                int encontrado = 0;
+
+                printf("Digite o nome do item a remover: ");
+                fgets(nomeRemover, sizeof(nomeRemover), stdin);
+                nomeRemover[strcspn(nomeRemover, "\n")] = '\0';
+
+                for (int i = 0; i < totalItens; i++) {
+                    if (strcmp(mochila[i].nome, nomeRemover) == 0) {
+                        for (int j = i; j < totalItens - 1; j++) {
+                            mochila[j] = mochila[j + 1];
+                        }
+                        totalItens--;
+                        encontrado = 1;
+                        printf("🗑️ Item removido com sucesso!\n");
+                        break;
+                    }
+                }
+                if (!encontrado) {
+                    printf("❌ Item nao encontrado.\n");
+                }
+                break;
+            }
+
+            case 3:
+                printf("\n📦 ITENS NA MOCHILA:\n");
+                printf("%-30s %-20s %-10s\n", "Nome", "Tipo", "Quantidade");
+                for (int i = 0; i < totalItens; i++) {
+                    printf("%-30s %-20s %-10d\n", mochila[i].nome, mochila[i].tipo, mochila[i].quantidade);
+                }
+                if (totalItens == 0) {
+                    printf("⚠️ Nenhum item cadastrado.\n");
+                }
+                break;
+
+            case 4: {
+                char nomeBusca[30];
+                int encontrado = 0;
+
+                printf("Digite o nome do item a buscar: ");
+                fgets(nomeBusca, sizeof(nomeBusca), stdin);
+                nomeBusca[strcspn(nomeBusca, "\n")] = '\0';
+
+                for (int i = 0; i < totalItens; i++) {
+                    if (strcmp(mochila[i].nome, nomeBusca) == 0) {
+                        printf("\n🔍 ITEM ENCONTRADO:\n");
+                        printf("Nome: %s\n", mochila[i].nome);
+                        printf("Tipo: %s\n", mochila[i].tipo);
+                        printf("Quantidade: %d\n", mochila[i].quantidade);
+                        encontrado = 1;
+                        break;
+                    }
+                }
+                if (!encontrado) {
+                    printf("❌ Item '%s' nao encontrado na mochila.\n", nomeBusca);
+                }
+                break;
+            }
+
+            case 0:
+                printf("👋 Saindo do programa...\n");
+                break;
+
+            default:
+                printf("⚠️ Opcao invalida. Tente novamente.\n");
+        }
+
+    } while (opcao != 0);
+
+    return 0;
+}
